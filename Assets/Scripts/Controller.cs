@@ -11,6 +11,7 @@ public class Controller : MonoBehaviour
     public Data data;
 
     [SerializeField] private TMP_Text clicksText;
+    [SerializeField] private TMP_Text autoClicksPerSecondText;
     [SerializeField] private TMP_Text clickClickPowerText;
 
     public BigDouble ClickPower()
@@ -20,7 +21,16 @@ public class Controller : MonoBehaviour
         {
             total += UpgradesManager.instance.clickUpgradesBasePower[i] * data.clickUpgradeLevel[i];
         }
+        return total;
+    }
 
+    public BigDouble AutoClicksPerSecond()
+    {
+        BigDouble total = 0;
+        for (int i = 0; i < data.productionUpgradeLevel.Count; i++)
+        {
+            total += UpgradesManager.instance.productionUpgradesBasePower[i] * data.productionUpgradeLevel[i];
+        }
         return total;
     }
     
@@ -32,8 +42,11 @@ public class Controller : MonoBehaviour
 
     private void Update()
     {
-        clicksText.text = data.clicks + " Clicks";
-        clickClickPowerText.text = "+" + ClickPower() + " Clicks";
+        clicksText.text = $"{data.clicks:F2} Clicks";
+        autoClicksPerSecondText.text = $"{AutoClicksPerSecond():F2}/s";
+        clickClickPowerText.text = $"+ {ClickPower()} Clicks";
+
+        data.clicks += AutoClicksPerSecond() * Time.deltaTime;
     }
 
     public void GenerateClick()
