@@ -13,7 +13,16 @@ public class Controller : MonoBehaviour
     [SerializeField] private TMP_Text clicksText;
     [SerializeField] private TMP_Text clickClickPowerText;
 
-    public BigDouble ClickPower() => 1 + data.clickUpgradeLevel[0];
+    public BigDouble ClickPower()
+    {
+        BigDouble total = 1;
+        for(int i = 0; i < data.clickUpgradeLevel.Count; i++)
+        {
+            total += UpgradesManager.instance.clickUpgradesBasePower[i] * data.clickUpgradeLevel[i];
+        }
+
+        return total;
+    }
     
     private void Start()
     {

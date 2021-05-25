@@ -23,10 +23,12 @@ public class UpgradesManager : MonoBehaviour
 
     public void StartUpgradeManager()
     {
-        clickUpgradeNames = new[] { "Click Power +1", "Click Power +5", "Click Power +10" };
-        clickUpgradeBaseCost = new BigDouble[] { 10, 50, 100 };
-        clickUpgradeCostMult = new BigDouble[] { 1.25, 1.35, 1.55 };
-        clickUpgradesBasePower = new BigDouble[] { 1, 5, 10 };
+        Methods.UpgradeCheck(Controller.instance.data.clickUpgradeLevel, 4);
+
+        clickUpgradeNames = new[] { "Click Power +1", "Click Power +5", "Click Power +10", "Click Power +25" };
+        clickUpgradeBaseCost = new BigDouble[] { 10, 50, 100, 1000 };
+        clickUpgradeCostMult = new BigDouble[] { 1.25, 1.35, 1.55, 1.45 };
+        clickUpgradesBasePower = new BigDouble[] { 1, 5, 10, 25 };
 
         for (int i = 0; i < Controller.instance.data.clickUpgradeLevel.Count; i++)
         {
@@ -49,8 +51,8 @@ public class UpgradesManager : MonoBehaviour
         void UpdateUI(int ID)
         {
             clickUpgrades[ID].LevelText.text = data.clickUpgradeLevel[ID].ToString();
-            clickUpgrades[ID].CostText.text = $"Cost:  {ClickUpgradeCost(ID):F2} +  Clicks";
-            clickUpgrades[ID].NameText.text = "+1 " + clickUpgradeNames[ID];
+            clickUpgrades[ID].CostText.text = $"Cost: {ClickUpgradeCost(ID):F2} Clicks";
+            clickUpgrades[ID].NameText.text = clickUpgradeNames[ID];
         }
     }
 
