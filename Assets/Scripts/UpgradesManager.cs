@@ -28,10 +28,12 @@ public class UpgradesManager : MonoBehaviour
     public BigDouble[] clickUpgradeBaseCost;
     public BigDouble[] clickUpgradeCostMult;
     public BigDouble[] clickUpgradesBasePower;
+    public BigDouble[] clickUpgradeUnlock;
 
     public BigDouble[] productionUpgradeBaseCost;
     public BigDouble[] productionUpgradeCostMult;
     public BigDouble[] productionUpgradesBasePower;
+    public BigDouble[] productionUpgradeUnlock;
 
     public void StartUpgradeManager()
     {
@@ -49,15 +51,18 @@ public class UpgradesManager : MonoBehaviour
         clickUpgradeBaseCost = new BigDouble[] { 10, 50, 100, 1000 };
         clickUpgradeCostMult = new BigDouble[] { 1.25, 1.35, 1.55, 2 };
         clickUpgradesBasePower = new BigDouble[] { 1, 5, 10, 25 };
+        clickUpgradeUnlock = new BigDouble[] {0, 25, 50, 500 };
 
         productionUpgradeBaseCost = new BigDouble[] { 25, 100, 1000, 10000 };
         productionUpgradeCostMult = new BigDouble[] { 1.5, 1.75, 2, 3 };
         productionUpgradesBasePower = new BigDouble[] { 1, 2, 10, 100 };
+        productionUpgradeUnlock = new BigDouble[] {0, 50, 500, 5000};
 
         for (int i = 0; i < Controller.instance.data.clickUpgradeLevel.Count; i++)
         {
             Upgrades upgrade = Instantiate(clickUpgradePrefab, clickUpgradesPanel);
             upgrade.UpgradeID = i;
+            upgrade.gameObject.SetActive(false);
             clickUpgrades.Add(upgrade);
         }
 
@@ -65,6 +70,7 @@ public class UpgradesManager : MonoBehaviour
         {
             Upgrades upgrade = Instantiate(productionUpgradesPrefab, productionUpgradesPanel);
             upgrade.UpgradeID = i;
+            upgrade.gameObject.SetActive(false);
             productionUpgrades.Add(upgrade);
         }
 
@@ -73,6 +79,21 @@ public class UpgradesManager : MonoBehaviour
 
         UpdateUpgradeUI("click");
         UpdateUpgradeUI("production");
+    }
+
+    public void Update()
+    {
+        for (int i = 0; i < clickUpgrades.Count; i++)
+        {
+            if (!clickUpgrades[i].gameObject.activeSelf)
+                clickUpgrades[i].gameObject.SetActive(Controller.instance.data.clicks >= clickUpgradeUnlock[i]);
+        }
+
+        for (int i = 0; i < clickUpgrades.Count; i++)
+        {
+            if (!productionUpgrades[i].gameObject.activeSelf)
+                productionUpgrades[i].gameObject.SetActive(Controller.instance.data.clicks >= productionUpgradeUnlock[i]);
+        }
     }
 
     public void UpdateUpgradeUI(string type,int UpgradeID = -1)
