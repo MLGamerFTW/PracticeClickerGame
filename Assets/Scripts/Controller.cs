@@ -33,12 +33,18 @@ public class Controller : MonoBehaviour
         }
         return total;
     }
-    
+
+    private const string dataFileName = "PlayerData_Tutorial";
     private void Start()
     {
-        data = new Data();
+        data = SaveSystem.SaveExists(dataFileName)
+            ? SaveSystem.LoadData<Data>(dataFileName)
+            : new Data();
+
         UpgradesManager.instance.StartUpgradeManager();
     }
+
+    public float SaveTime;
 
     private void Update()
     {
@@ -47,6 +53,13 @@ public class Controller : MonoBehaviour
         clickClickPowerText.text = $"+ {ClickPower()} Clicks";
 
         data.clicks += AutoClicksPerSecond() * Time.deltaTime;
+
+        SaveTime += Time.deltaTime * (1 / Time.timeScale);
+        if(SaveTime >= 5)
+        {
+            SaveSystem.SaveData(data, dataFileName);
+            SaveTime = 0;
+        }
     }
 
     public void GenerateClick()
