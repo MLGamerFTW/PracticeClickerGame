@@ -10,6 +10,8 @@ public class UpgradesManager : MonoBehaviour
     public static UpgradesManager instance;
     private void Awake() => instance = this;
 
+    public List<GameObject> unlockedMonsters;
+
     public List<Upgrades> clickUpgrades;
     public Upgrades clickUpgradePrefab;
 
@@ -79,6 +81,7 @@ public class UpgradesManager : MonoBehaviour
 
         UpdateUpgradeUI("click");
         UpdateUpgradeUI("production");
+        CheckMonsterUnlocked();
     }
 
     public void Update()
@@ -110,7 +113,10 @@ public class UpgradesManager : MonoBehaviour
             case "production":
                 if (UpgradeID == -1)
                     for (int i = 0; i < productionUpgrades.Count; i++) UpdateUI(productionUpgrades, data.productionUpgradeLevel, productionUpgradeNames, i);
-                else UpdateUI(productionUpgrades, data.productionUpgradeLevel, productionUpgradeNames, UpgradeID);
+                else
+                {
+                    UpdateUI(productionUpgrades, data.productionUpgradeLevel, productionUpgradeNames, UpgradeID);
+                }
                 break;
         }
 
@@ -147,6 +153,8 @@ public class UpgradesManager : MonoBehaviour
                 break;
             case "production":
                 Buy(data.productionUpgradeLevel);
+                data.monstersUnlocked[UpgradeID] = 1;
+                CheckMonsterUnlocked(UpgradeID);
                 break;
         }
 
@@ -161,4 +169,24 @@ public class UpgradesManager : MonoBehaviour
             UpdateUpgradeUI(type, UpgradeID);
         }
     }
+
+    public void CheckMonsterUnlocked(int UpgradeID = -1)
+    {
+        var data = Controller.instance.data;
+        if (UpgradeID == -1)
+        {
+            for (int i = 0; i < data.monstersUnlocked.Count; i++)
+            {
+                bool setActive = data.monstersUnlocked[i] == 1;
+                unlockedMonsters[i].SetActive(setActive);
+            }
+        }
+        else
+        {
+            bool setActive = data.monstersUnlocked[UpgradeID] == 1;
+            unlockedMonsters[UpgradeID].SetActive(setActive);
+        }
+    }
 }
+
+   
