@@ -153,8 +153,9 @@ public class UpgradesManager : MonoBehaviour
                 break;
             case "production":
                 Buy(data.productionUpgradeLevel);
-                data.monstersUnlocked[UpgradeID] = 1;
+                data.monstersUnlocked[UpgradeID] = true;
                 CheckMonsterUnlocked(UpgradeID);
+                TeamSelectManager.instance.UpdateSelectTeamUI();
                 break;
         }
 
@@ -177,13 +178,13 @@ public class UpgradesManager : MonoBehaviour
         {
             for (int i = 0; i < data.monstersUnlocked.Count; i++)
             {
-                bool setActive = data.monstersUnlocked[i] == 1;
+                bool setActive = data.monstersUnlocked[i];
                 unlockedMonsters[i].SetActive(setActive);
             }
         }
         else
         {
-            bool setActive = data.monstersUnlocked[UpgradeID] == 1;
+            bool setActive = data.monstersUnlocked[UpgradeID];
             unlockedMonsters[UpgradeID].SetActive(setActive);
         }
     }

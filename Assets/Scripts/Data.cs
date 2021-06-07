@@ -11,8 +11,7 @@ public class Data
 
     public List<int> clickUpgradeLevel;
     public List<int> productionUpgradeLevel;
-    public List<int> monstersUnlocked;
-    //public List<int> monstersUnlocked;
+    public List<bool> monstersUnlocked;
 
     public Data()
     {
@@ -20,7 +19,6 @@ public class Data
 
         clickUpgradeLevel = new int[4].ToList();
         productionUpgradeLevel = new int[4].ToList();
-        monstersUnlocked = new int[4].ToList();
-        //monstersUnlocked = Enumerable.Repeat(false, 4).ToList();
+        monstersUnlocked = new bool[4].ToList();
     }
 }

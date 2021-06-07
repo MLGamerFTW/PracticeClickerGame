@@ -42,6 +42,7 @@ public class Controller : MonoBehaviour
             : new Data();
 
         UpgradesManager.instance.StartUpgradeManager();
+        TeamSelectManager.instance.StartTeamSelectManager();
     }
 
     public float SaveTime;
@@ -66,4 +67,5 @@ public class Controller : MonoBehaviour
     {
         data.clicks += ClickPower();
     }
+
 }
