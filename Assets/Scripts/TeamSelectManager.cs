@@ -15,7 +15,7 @@ public class TeamSelectManager : MonoBehaviour
     public TeamSelect teamSelectPrefab;
 
     public ScrollRect teamSelectScroll;
-    public Transform teamSelectPanel;
+    public RectTransform teamSelectPanel;
 
     public Animator[] selectedMonsters;
 
@@ -38,10 +38,10 @@ public class TeamSelectManager : MonoBehaviour
         }
 
         teamSelectScroll.normalizedPosition = new Vector2(0, 0);
-
+        teamSelectPanel.offsetMin = teamSelectPanel.offsetMax = Vector2.zero;
         UpdateSelectTeamUI();
     }
-    
+
     public void UpdateSelectTeamUI()
     {
         for (int i = 0; i < teamSelectList.Count; i++)
@@ -49,7 +49,7 @@ public class TeamSelectManager : MonoBehaviour
             teamSelectList[i].MonsterPreview = choosableMonsterImages[i];
             teamSelectList[i].NameText.text = monsterNames[i];
             teamSelectList[i].LevelText.text = $"Level: {Controller.instance.data.productionUpgradeLevel[i]}";
-            
+
             if (!teamSelectList[i].gameObject.activeSelf)
             {
                 teamSelectList[i].gameObject.SetActive(Controller.instance.data.productionUpgradeLevel[i] > 0);
@@ -61,6 +61,8 @@ public class TeamSelectManager : MonoBehaviour
     {
         switch(currentSelection)
         {
+            case -1:
+                break;
             case 0:
                 SelectTeamMember1(MonsterID);
                 break;
@@ -76,18 +78,39 @@ public class TeamSelectManager : MonoBehaviour
         {
             selectedMonsters[0].runtimeAnimatorController = teamSelectList[ID].MonsterPreview.runtimeAnimatorController;
             currentSelectedMonster = 1;
+            teamSelectList[ID].gameObject.SetActive(false);
         }
 
         void SelectTeamMember2(int ID)
         {
             selectedMonsters[1].runtimeAnimatorController = teamSelectList[ID].MonsterPreview.runtimeAnimatorController;
             currentSelectedMonster = 2;
+            teamSelectList[ID].gameObject.SetActive(false);
         }
 
         void SelectTeamMember3(int ID)
         {
             selectedMonsters[2].runtimeAnimatorController = teamSelectList[ID].MonsterPreview.runtimeAnimatorController;
-            currentSelectedMonster = 0;
+            currentSelectedMonster = -1;
+            teamSelectList[ID].gameObject.SetActive(false);
+        }
+    }
+
+    public void ResetSelectedTeam()
+    {
+        for (int i = 0; i < teamSelectList.Count; i++)
+        {
+            if (!teamSelectList[i].gameObject.activeSelf)
+            {
+                teamSelectList[i].gameObject.SetActive(Controller.instance.data.productionUpgradeLevel[i] > 0);
+            }
+        }
+
+        currentSelectedMonster = 0;
+
+        for (int i = 0; i < selectedMonsters.Length; i++)
+        {
+            selectedMonsters[i].runtimeAnimatorController = null;
         }
     }
 }
