@@ -100,12 +100,16 @@ public class UpgradesManager : MonoBehaviour
         {
             if (!clickUpgrades[i].gameObject.activeSelf)
                 clickUpgrades[i].gameObject.SetActive(Controller.instance.data.clicks >= clickUpgradeUnlock[i]);
+            if(Controller.instance.data.clickUpgradeLevel[i] > 0)
+                clickUpgrades[i].gameObject.SetActive(true);
         }
 
         for (int i = 0; i < clickUpgrades.Count; i++)
         {
             if (!productionUpgrades[i].gameObject.activeSelf)
                 productionUpgrades[i].gameObject.SetActive(Controller.instance.data.clicks >= productionUpgradeUnlock[i]);
+            if (Controller.instance.data.productionUpgradeLevel[i] > 0)
+                productionUpgrades[i].gameObject.SetActive(true);
         }
 
         if (Controller.instance.data.productionUpgradeLevel[2] > 0)
