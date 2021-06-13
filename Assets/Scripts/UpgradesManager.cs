@@ -12,6 +12,8 @@ public class UpgradesManager : MonoBehaviour
 
     public List<GameObject> unlockedMonsters;
 
+    public Sprite[] petPreviewImages;
+
     public List<Upgrades> clickUpgrades;
     public Upgrades clickUpgradePrefab;
 
@@ -37,6 +39,8 @@ public class UpgradesManager : MonoBehaviour
     public BigDouble[] productionUpgradesBasePower;
     public BigDouble[] productionUpgradeUnlock;
 
+    public GameObject battleButton;
+
     public void StartUpgradeManager()
     {
         Methods.UpgradeCheck(Controller.instance.data.clickUpgradeLevel, 4);
@@ -60,6 +64,8 @@ public class UpgradesManager : MonoBehaviour
         productionUpgradesBasePower = new BigDouble[] { 1, 2, 10, 100 };
         productionUpgradeUnlock = new BigDouble[] {0, 50, 500, 5000};
 
+        battleButton.SetActive(false);
+
         for (int i = 0; i < Controller.instance.data.clickUpgradeLevel.Count; i++)
         {
             Upgrades upgrade = Instantiate(clickUpgradePrefab, clickUpgradesPanel);
@@ -73,6 +79,7 @@ public class UpgradesManager : MonoBehaviour
             Upgrades upgrade = Instantiate(productionUpgradesPrefab, productionUpgradesPanel);
             upgrade.UpgradeID = i;
             upgrade.gameObject.SetActive(false);
+            upgrade.petPreviewImage.sprite = petPreviewImages[i];
             productionUpgrades.Add(upgrade);
         }
 
@@ -97,6 +104,9 @@ public class UpgradesManager : MonoBehaviour
             if (!productionUpgrades[i].gameObject.activeSelf)
                 productionUpgrades[i].gameObject.SetActive(Controller.instance.data.clicks >= productionUpgradeUnlock[i]);
         }
+
+        if (Controller.instance.data.productionUpgradeLevel[2] > 0)
+            battleButton.SetActive(true);
     }
 
     public void UpdateUpgradeUI(string type,int UpgradeID = -1)
@@ -122,7 +132,7 @@ public class UpgradesManager : MonoBehaviour
 
         void UpdateUI(List<Upgrades> upgrades, List<int> upgradeLevels, string[] upgradeNames, int ID)
         {
-            upgrades[ID].LevelText.text = upgradeLevels[ID].ToString();
+            upgrades[ID].LevelText.text = $"Lv. {upgradeLevels[ID].ToString()}";
             upgrades[ID].CostText.text = $"Cost: {UpgradeCost(type, ID):F2} Clicks";
             upgrades[ID].NameText.text = upgradeNames[ID];
         }
@@ -153,7 +163,8 @@ public class UpgradesManager : MonoBehaviour
                 break;
             case "production":
                 Buy(data.productionUpgradeLevel);
-                data.monstersUnlocked[UpgradeID] = true;
+                if(data.productionUpgradeLevel[UpgradeID] > 0)
+                    data.monstersUnlocked[UpgradeID] = true;
                 CheckMonsterUnlocked(UpgradeID);
                 TeamSelectManager.instance.UpdateSelectTeamUI();
                 break;

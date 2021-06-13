@@ -18,6 +18,7 @@ public class TeamSelectManager : MonoBehaviour
     public RectTransform teamSelectPanel;
 
     public Animator[] selectedMonsters;
+    public int[] ChosenMonsters;
 
     public int currentSelectedMonster;
 
@@ -27,7 +28,8 @@ public class TeamSelectManager : MonoBehaviour
 
     public void StartTeamSelectManager()
     {
-        monsterNames = new[] { "Monster0", "Monster1", "Monster2", "Monster3" };
+        ChosenMonsters = new int[] { -1, -1, -1 };
+        monsterNames = new[] { "Amogus", "Cone Cat", "Rock Fairy", "Ice Cream" };
 
         for (int i = 0; i < Controller.instance.data.productionUpgradeLevel.Count; i++)
         {
@@ -46,7 +48,7 @@ public class TeamSelectManager : MonoBehaviour
     {
         for (int i = 0; i < teamSelectList.Count; i++)
         {
-            teamSelectList[i].MonsterPreview = choosableMonsterImages[i];
+            teamSelectList[i].MonsterPreview.runtimeAnimatorController = choosableMonsterImages[i].runtimeAnimatorController;
             teamSelectList[i].NameText.text = monsterNames[i];
             teamSelectList[i].LevelText.text = $"Level: {Controller.instance.data.productionUpgradeLevel[i]}";
 
@@ -77,6 +79,7 @@ public class TeamSelectManager : MonoBehaviour
         void SelectTeamMember1(int ID)
         {
             selectedMonsters[0].runtimeAnimatorController = teamSelectList[ID].MonsterPreview.runtimeAnimatorController;
+            ChosenMonsters[0] = ID;
             currentSelectedMonster = 1;
             teamSelectList[ID].gameObject.SetActive(false);
         }
@@ -84,6 +87,7 @@ public class TeamSelectManager : MonoBehaviour
         void SelectTeamMember2(int ID)
         {
             selectedMonsters[1].runtimeAnimatorController = teamSelectList[ID].MonsterPreview.runtimeAnimatorController;
+            ChosenMonsters[1] = ID;
             currentSelectedMonster = 2;
             teamSelectList[ID].gameObject.SetActive(false);
         }
@@ -91,6 +95,7 @@ public class TeamSelectManager : MonoBehaviour
         void SelectTeamMember3(int ID)
         {
             selectedMonsters[2].runtimeAnimatorController = teamSelectList[ID].MonsterPreview.runtimeAnimatorController;
+            ChosenMonsters[2] = ID;
             currentSelectedMonster = -1;
             teamSelectList[ID].gameObject.SetActive(false);
         }
@@ -107,6 +112,7 @@ public class TeamSelectManager : MonoBehaviour
         }
 
         currentSelectedMonster = 0;
+        ChosenMonsters =new int[] { -1, -1, -1};
 
         for (int i = 0; i < selectedMonsters.Length; i++)
         {
