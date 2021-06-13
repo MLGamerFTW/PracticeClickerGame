@@ -9,7 +9,8 @@ public class WorldTransfer : MonoBehaviour
     public GameObject ClickGameCanvas;
     public GameObject TeamSelectCanvas;
     public GameObject AutoBattleCanvas;
-    
+    public GameObject outcomePanel;
+
     public void GoToTeamSelect()
     {
         TeamSelectCanvas.SetActive(true);
@@ -22,6 +23,7 @@ public class WorldTransfer : MonoBehaviour
         ClickGameCanvas.SetActive(true);
         AutoBattleCanvas.SetActive(false);
         TeamSelectCanvas.SetActive(false);
+        outcomePanel.SetActive(false);
         TeamSelectManager.instance.ResetSelectedTeam();
     }
 

@@ -24,12 +24,9 @@ public class TeamSelectManager : MonoBehaviour
 
     public Animator[] choosableMonsterImages;
 
-    public string[] monsterNames;
-
     public void StartTeamSelectManager()
     {
         ChosenMonsters = new int[] { -1, -1, -1 };
-        monsterNames = new[] { "Amogus", "Cone Cat", "Rock Fairy", "Ice Cream" };
 
         for (int i = 0; i < Controller.instance.data.productionUpgradeLevel.Count; i++)
         {
@@ -49,7 +46,7 @@ public class TeamSelectManager : MonoBehaviour
         for (int i = 0; i < teamSelectList.Count; i++)
         {
             teamSelectList[i].MonsterPreview.runtimeAnimatorController = choosableMonsterImages[i].runtimeAnimatorController;
-            teamSelectList[i].NameText.text = monsterNames[i];
+            teamSelectList[i].NameText.text = UpgradesManager.instance.petNames[i];
             teamSelectList[i].LevelText.text = $"Level: {Controller.instance.data.productionUpgradeLevel[i]}";
 
             if (!teamSelectList[i].gameObject.activeSelf)

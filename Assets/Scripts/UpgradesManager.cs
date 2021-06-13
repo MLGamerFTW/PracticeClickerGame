@@ -13,6 +13,7 @@ public class UpgradesManager : MonoBehaviour
     public List<GameObject> unlockedMonsters;
 
     public Sprite[] petPreviewImages;
+    public string[] petNames;
 
     public List<Upgrades> clickUpgrades;
     public Upgrades clickUpgradePrefab;
@@ -45,6 +46,7 @@ public class UpgradesManager : MonoBehaviour
     {
         Methods.UpgradeCheck(Controller.instance.data.clickUpgradeLevel, 4);
 
+        petNames = new[] { "Amogus", "Cone Cat", "Rock Fairy", "Ice Cream" };
         clickUpgradeNames = new[] { "Click Power +1", "Click Power +5", "Click Power +10", "Click Power +25" };
         productionUpgradeNames = new[]
         {
@@ -80,6 +82,7 @@ public class UpgradesManager : MonoBehaviour
             upgrade.UpgradeID = i;
             upgrade.gameObject.SetActive(false);
             upgrade.petPreviewImage.sprite = petPreviewImages[i];
+            upgrade.PetNameText.text = petNames[i];
             productionUpgrades.Add(upgrade);
         }
 
