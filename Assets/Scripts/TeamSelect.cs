@@ -1,7 +1,7 @@
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine;
-using UnityEditor.Animations;
+using UnityEngine.Animations;
 
 public class TeamSelect : MonoBehaviour
 {

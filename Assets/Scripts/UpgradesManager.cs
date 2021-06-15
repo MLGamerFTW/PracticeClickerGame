@@ -12,6 +12,7 @@ public class UpgradesManager : MonoBehaviour
 
     public List<GameObject> unlockedMonsters;
 
+    public Sprite[] clickPreviewImages;
     public Sprite[] petPreviewImages;
     public string[] petNames;
 
@@ -45,26 +46,32 @@ public class UpgradesManager : MonoBehaviour
     public void StartUpgradeManager()
     {
         Methods.UpgradeCheck(Controller.instance.data.clickUpgradeLevel, 4);
+        Methods.UpgradeCheck(Controller.instance.data.productionUpgradeLevel, 8);
+        Methods.UpgradeCheck(Controller.instance.data.monstersUnlocked, 8);
 
-        petNames = new[] { "Amogus", "Cone Cat", "Rock Fairy", "Ice Cream" };
-        clickUpgradeNames = new[] { "Click Power +1", "Click Power +5", "Click Power +10", "Click Power +25" };
+        petNames = new[] { "Amogus", "Cone Cat", "Crystal Fairy", "Neapolitan", "Feesh", "Mike", "Bom-ba", "Mystic Shroom"};
+        clickUpgradeNames = new[] { "Click Power +1", "Click Power +2", "Click Power +3", "Click Power +5" };
         productionUpgradeNames = new[]
         {
-            "+1 AutoClicks/s",
-            "+2 AutoClicks/s",
+            "+0.1 AutoClicks/s",
+            "+0.5 AutoClicks/s",
+            "+4 AutoClicks/s",
             "+10 AutoClicks/s",
-            "+100 AutoClicks/s"
+            "+40 AutoClicks/s",
+            "+100 AutoClicks/s",
+            "+400 AutoClicks/s",
+            "+6,666 AutoClicks/s"
         };
 
-        clickUpgradeBaseCost = new BigDouble[] { 10, 50, 100, 1000 };
-        clickUpgradeCostMult = new BigDouble[] { 1.25, 1.35, 1.55, 2 };
-        clickUpgradesBasePower = new BigDouble[] { 1, 5, 10, 25 };
-        clickUpgradeUnlock = new BigDouble[] {0, 25, 50, 500 };
+        clickUpgradeBaseCost = new BigDouble[] { 100, 250, 500, 1000 };
+        clickUpgradeCostMult = new BigDouble[] { 1.15, 1.17, 1.19, 1.21 };
+        clickUpgradesBasePower = new BigDouble[] { 1, 2, 3, 5 };
+        clickUpgradeUnlock = new BigDouble[] {0, 205, 500, 5000 };
 
-        productionUpgradeBaseCost = new BigDouble[] { 25, 100, 1000, 10000 };
-        productionUpgradeCostMult = new BigDouble[] { 1.5, 1.75, 2, 3 };
-        productionUpgradesBasePower = new BigDouble[] { 1, 2, 10, 100 };
-        productionUpgradeUnlock = new BigDouble[] {0, 50, 500, 5000};
+        productionUpgradeBaseCost = new BigDouble[] { 15, 100, 500, 3000, 10000, 40000, 200000, 1666666 };
+        productionUpgradeCostMult = new BigDouble[] { 1.15, 1.15, 1.15, 1.15, 1.15, 1.15, 1.15, 1.15 };
+        productionUpgradesBasePower = new BigDouble[] { 0.1, 0.5, 4, 10, 40, 100, 400, 6666 };
+        productionUpgradeUnlock = new BigDouble[] {0, 50, 250, 1500, 5000, 20000, 100000, 833333};
 
         battleButton.SetActive(false);
 
@@ -73,6 +80,7 @@ public class UpgradesManager : MonoBehaviour
             Upgrades upgrade = Instantiate(clickUpgradePrefab, clickUpgradesPanel);
             upgrade.UpgradeID = i;
             upgrade.gameObject.SetActive(false);
+            upgrade.petPreviewImage.sprite = clickPreviewImages[i];
             clickUpgrades.Add(upgrade);
         }
 
@@ -104,7 +112,7 @@ public class UpgradesManager : MonoBehaviour
                 clickUpgrades[i].gameObject.SetActive(true);
         }
 
-        for (int i = 0; i < clickUpgrades.Count; i++)
+        for (int i = 0; i < productionUpgrades.Count; i++)
         {
             if (!productionUpgrades[i].gameObject.activeSelf)
                 productionUpgrades[i].gameObject.SetActive(Controller.instance.data.clicks >= productionUpgradeUnlock[i]);
@@ -140,7 +148,7 @@ public class UpgradesManager : MonoBehaviour
         void UpdateUI(List<Upgrades> upgrades, List<int> upgradeLevels, string[] upgradeNames, int ID)
         {
             upgrades[ID].LevelText.text = $"Lv. {upgradeLevels[ID].ToString()}";
-            upgrades[ID].CostText.text = $"Cost: {UpgradeCost(type, ID):F2} Clicks";
+            upgrades[ID].CostText.text = $"Cost: {UpgradeCost(type, ID).Notate()} Clicks";
             upgrades[ID].NameText.text = upgradeNames[ID];
         }
     }

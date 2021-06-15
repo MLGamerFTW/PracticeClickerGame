@@ -20,20 +20,20 @@ public class Navigation : MonoBehaviour
         ClickUpgradesNotSelected.SetActive(true);
         ProductionUpgradesNotSelected.SetActive(true);
 
-        ClickUpgradesTitleText.color = Color.grey;
-        ProductionUpgradesTitleText.color = Color.grey;
+        ClickUpgradesTitleText.color = Color.black;
+        ProductionUpgradesTitleText.color = Color.black;
 
         switch (location)
         {
             case "Click":
                 UpgradesManager.instance.clickUpgradesScroll.gameObject.SetActive(true);
                 ClickUpgradesNotSelected.SetActive(false);
-                ClickUpgradesTitleText.color = Color.white;
+                ClickUpgradesTitleText.color = Color.black;
                 break;
             case "Production":
                 UpgradesManager.instance.productionUpgradesScroll.gameObject.SetActive(true);
                 ProductionUpgradesNotSelected.SetActive(false);
-                ProductionUpgradesTitleText.color = Color.white;
+                ProductionUpgradesTitleText.color = Color.black;
                 break;
         }
     }

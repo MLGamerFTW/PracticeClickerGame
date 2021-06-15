@@ -4,7 +4,7 @@ using BreakInfinity;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEditor.Animations;
+using UnityEngine.Animations;
 
 public class TeamSelectManager : MonoBehaviour
 {
@@ -19,6 +19,9 @@ public class TeamSelectManager : MonoBehaviour
 
     public Animator[] selectedMonsters;
     public int[] ChosenMonsters;
+    
+    public Image[] selectedMonsterPreview;
+    public Sprite petPreview;
 
     public int currentSelectedMonster;
 
@@ -114,6 +117,7 @@ public class TeamSelectManager : MonoBehaviour
         for (int i = 0; i < selectedMonsters.Length; i++)
         {
             selectedMonsters[i].runtimeAnimatorController = null;
+            selectedMonsterPreview[i].sprite = petPreview;
         }
     }
 }

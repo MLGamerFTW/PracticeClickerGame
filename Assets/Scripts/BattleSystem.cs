@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using UnityEngine.Animations;
 using Random = UnityEngine.Random;
 using TMPro;
+using BreakInfinity;
 
 
 public enum BattleState { START, PLAYERTURN, ENEMYTURN, WON, LOST }
@@ -17,6 +18,8 @@ public class BattleSystem : MonoBehaviour
 
     public List<MonsterStats> friendlyMonsterStatsList;
     public List<MonsterStats> enemyMonsterStatsList;
+
+    public List<GameObject> allUnits;
 
     public GameObject friendlyPrefab;
     public GameObject enemyPrefab;
@@ -36,6 +39,8 @@ public class BattleSystem : MonoBehaviour
     public int currentFriendly;
     public int currentEnemy;
 
+    public BigDouble outcomeReward;
+
     public BattleHUD battleHUD;
 
     public BattleState state;
@@ -48,8 +53,12 @@ public class BattleSystem : MonoBehaviour
 
     IEnumerator SetupBattle()
     {
+        var petLevel = Controller.instance.data.productionUpgradeLevel;
+
         for (int i = 0; i < 3; i++)
         {
+            //int friendlyLevel = ((petLevel[friendlyMonsterStatsList[0].MonsterID] + petLevel[friendlyMonsterStatsList[1].MonsterID] + petLevel[friendlyMonsterStatsList[2].MonsterID]) * 1) / 3;
+
             GameObject friendlyGO = Instantiate(friendlyPrefab, playerBattleStations[i]);
             MonsterStats friendlyUnit = friendlyGO.GetComponent<MonsterStats>();
 
@@ -58,18 +67,19 @@ public class BattleSystem : MonoBehaviour
             friendlyUnit.MonsterCurrentHP = (int)(Math.Pow(Controller.instance.data.productionUpgradeLevel[friendlyUnit.MonsterID], 1.1) * 5);
             friendlyUnit.MonsterAttackPower = (int)(Math.Pow(Controller.instance.data.productionUpgradeLevel[friendlyUnit.MonsterID], 1.1) * 1.3 + 1);
             friendlyUnit.MonsterAnimator.runtimeAnimatorController = friendlyAnimators[friendlyUnit.MonsterID].runtimeAnimatorController;
+            friendlyUnit.MonsterHPText.text = $"HP {friendlyUnit.MonsterCurrentHP}/{friendlyUnit.MonsterMaxHP}";
 
             friendlyUnit.hpSlider.maxValue = friendlyUnit.MonsterMaxHP;
             friendlyUnit.hpSlider.value = friendlyUnit.MonsterCurrentHP;
 
             friendlyMonsterStatsList.Add(friendlyUnit);
+            allUnits.Add(friendlyGO);
         }
 
         for (int i = 0; i < 3; i++)
         {
-            int enemyType = Random.Range(0, 3);
-            var petLevel = Controller.instance.data.productionUpgradeLevel;
-            int enemyLevel = ((petLevel[friendlyMonsterStatsList[0].MonsterID] + petLevel[friendlyMonsterStatsList[1].MonsterID] + petLevel[friendlyMonsterStatsList[2].MonsterID]) * 1) / 2 + (i - 1);
+            int enemyType = Random.Range(0, 4);
+            int enemyLevel = ((petLevel[friendlyMonsterStatsList[0].MonsterID] + petLevel[friendlyMonsterStatsList[1].MonsterID] + petLevel[friendlyMonsterStatsList[2].MonsterID]) * 5) / 12 + (i - 1);
             GameObject enemyGO = Instantiate(enemyPrefab, enemyBattleStation);
             MonsterStats enemyUnit = enemyGO.GetComponent<MonsterStats>();
 
@@ -80,8 +90,11 @@ public class BattleSystem : MonoBehaviour
 
             enemyUnit.hpSlider.maxValue = enemyUnit.MonsterMaxHP;
             enemyUnit.hpSlider.value = enemyUnit.MonsterCurrentHP;
+            enemyUnit.MonsterHPText.text = $"HP {enemyUnit.MonsterCurrentHP}/{enemyUnit.MonsterMaxHP}";
             enemyUnit.Monster.SetActive(false);
+
             enemyMonsterStatsList.Add(enemyUnit);
+            allUnits.Add(enemyGO);
         }
         enemyMonsterStatsList[0].Monster.SetActive(true);
         currentEnemy = 0;
@@ -90,7 +103,9 @@ public class BattleSystem : MonoBehaviour
         friendlyAlive = new[] { true, true, true };
         enemyAlive = new[] { true, true, true };
 
+        outcomeReward = (int)Controller.instance.AutoClicksPerSecond() * 100;
         battleHUD.SetBattleHUD();
+        battleHUD.currentEnemyText.text = $"Enemy {currentEnemy + 1} / 3";
 
         yield return new WaitForSeconds(2f);
 
@@ -127,6 +142,9 @@ public class BattleSystem : MonoBehaviour
 
                 enemyAlive[currentEnemy] = enemyMonsterStatsList[currentEnemy].TakeDamage(friendlyMonsterStatsList[currentFriendly].MonsterAttackPower);
 
+                if (enemyMonsterStatsList[currentEnemy].MonsterCurrentHP < 0) enemyMonsterStatsList[currentEnemy].MonsterCurrentHP = 0;
+                enemyMonsterStatsList[currentEnemy].MonsterHPText.text = $"HP {enemyMonsterStatsList[currentEnemy].MonsterCurrentHP}/{enemyMonsterStatsList[currentEnemy].MonsterMaxHP}";
+                
                 enemyMonsterStatsList[currentEnemy].SetHP();
 
                 battleHUD.battleText.text = $"{UpgradesManager.instance.petNames[friendlyMonsterStatsList[currentFriendly].MonsterID]} attacked the monster for {friendlyMonsterStatsList[currentFriendly].MonsterAttackPower} HP";
@@ -145,6 +163,7 @@ public class BattleSystem : MonoBehaviour
                     if (currentEnemy < 3)
                     {
                         enemyMonsterStatsList[currentEnemy].Monster.SetActive(true);
+                        battleHUD.currentEnemyText.text = $"Enemy {currentEnemy + 1} / 3";
                         yield return new WaitForSeconds(2f);
                     }
 
@@ -191,6 +210,9 @@ public class BattleSystem : MonoBehaviour
 
             friendlyAlive[enemyTarget] = friendlyMonsterStatsList[enemyTarget].TakeDamage(enemyMonsterStatsList[currentEnemy].MonsterAttackPower);
 
+            if (friendlyMonsterStatsList[enemyTarget].MonsterCurrentHP < 0) friendlyMonsterStatsList[enemyTarget].MonsterCurrentHP = 0;
+            friendlyMonsterStatsList[enemyTarget].MonsterHPText.text = $"HP {friendlyMonsterStatsList[enemyTarget].MonsterCurrentHP}/{friendlyMonsterStatsList[enemyTarget].MonsterMaxHP}";
+
             battleHUD.battleText.text = $"The monster attacked {UpgradesManager.instance.petNames[friendlyMonsterStatsList[enemyTarget].MonsterID]} for {enemyMonsterStatsList[currentEnemy].MonsterAttackPower} HP";
 
             friendlyMonsterStatsList[enemyTarget].SetHP();
@@ -233,34 +255,32 @@ public class BattleSystem : MonoBehaviour
 
     void EndBattle()
     {
-        if(state == BattleState.WON)
+        if (state == BattleState.WON)
+        {
             battleHUD.battleText.text = "You won!";
+            Controller.instance.data.clicks += outcomeReward;
+            battleHUD.rewardText.text = $"You earned {outcomeReward.Notate()} Clicks";
+        }
         if (state == BattleState.LOST)
+        {
             battleHUD.battleText.text = "You lost!";
+            Controller.instance.data.clicks += outcomeReward / 4;
+            battleHUD.rewardText.text = $"You earned {outcomeReward.Notate()} Clicks";
+        }
 
+        DestroyAllUnits();
+
+        battleHUD.currentEnemyText.text = "";
         battleHUD.outcomePanel.SetActive(true);
     }
 
-    /*
-    IEnumerator EnemyTurn()
+    public void DestroyAllUnits()
     {
-
-    }
-
-    IEnumerator PlayerTurn()
-    {
-        int numOfAttackfriendlyAlive = 0;
-        for(int i = 0; i < 3; i++)
+        for(int i = 0; i < allUnits.Count; i++)
         {
-            if(friendlyAlive[i])
-                numOfAttackfriendlyAlive++;
+            Destroy(allUnits[i]);
         }
-
-        for (int i = 0; i < numOfAttackfriendlyAlive; i++)
-        { 
-        StartCoroutine(FriendlyAttack(i));
-        yield return new WaitForSeconds(7f);
-        }
+        enemyMonsterStatsList.Clear();
+        friendlyMonsterStatsList.Clear();
     }
-    */
 }

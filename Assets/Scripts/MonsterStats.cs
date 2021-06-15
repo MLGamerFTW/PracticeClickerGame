@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class MonsterStats : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class MonsterStats : MonoBehaviour
     public int MonsterMaxHP;
     public int MonsterCurrentHP;
     public int MonsterAttackPower;
+    public TMP_Text MonsterHPText;
     public Slider hpSlider;
     public GameObject Monster;
     public Animator MonsterAnimator;

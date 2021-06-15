@@ -34,7 +34,7 @@ public class Controller : MonoBehaviour
         return total;
     }
 
-    private const string dataFileName = "PlayerData_Tutorial";
+    public string dataFileName = "PlayerData_Tutorial";
     private void Start()
     {
         data = SaveSystem.SaveExists(dataFileName)
@@ -49,13 +49,13 @@ public class Controller : MonoBehaviour
 
     private void Update()
     {
-        clicksText.text = $"{data.clicks:F2} Clicks";
-        autoClicksPerSecondText.text = $"{AutoClicksPerSecond():F2}/s";
+        clicksText.text = $"{data.clicks.Notate()} Clicks";
+        autoClicksPerSecondText.text = $"{AutoClicksPerSecond().Notate()}/s";
         clickClickPowerText.text = $"+ {ClickPower()} Clicks";
 
         data.clicks += AutoClicksPerSecond() * Time.deltaTime;
 
-        SaveTime += Time.deltaTime * (1 / Time.timeScale);
+        SaveTime += Time.deltaTime;
         if(SaveTime >= 5)
         {
             SaveSystem.SaveData(data, dataFileName);

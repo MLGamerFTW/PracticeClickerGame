@@ -18,7 +18,7 @@ public class Data
         clicks = 0;
 
         clickUpgradeLevel = new int[4].ToList();
-        productionUpgradeLevel = new int[4].ToList();
-        monstersUnlocked = new bool[4].ToList();
+        productionUpgradeLevel = new int[8].ToList();
+        monstersUnlocked = new bool[8].ToList();
     }
 }
